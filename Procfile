@@ -1,0 +1,1 @@
+web: ./build/install/sample-server-side/bin/sample-server-side

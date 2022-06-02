@@ -1,6 +1,6 @@
 package com.saketh.sample.songDetails
 
-import com.saketh.sample.mongoClient
+import com.saketh.sample.clientStuff.mongoClient
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
