@@ -5,7 +5,7 @@ import org.bson.Document
 import org.litote.kmongo.KMongo
 
 fun mongoClient(): MongoCollection<Document> {
-    return KMongo.createClient("mongodb+srv://saketh:9ZHvOnEP9BhLYCr3@cluster0.2wr7r7n.mongodb.net/?retryWrites=true&w=majority")
-        .getDatabase("allsongs")
-        .getCollection("songDetails")
+    return KMongo.createClient("mongodb+srv://${System.getenv("USER_NAME")}:${System.getenv("PASSWORD")}@cluster0.2wr7r7n.mongodb.net/?retryWrites=true&w=majority")
+        .getDatabase(System.getenv("DATABASE_NAME"))
+        .getCollection(System.getenv("COLLECTION_NAME"))
 }
