@@ -22,7 +22,10 @@ sourceSets {
     main.resources.srcDirs = ['resources']
     test.resources.srcDirs = ['testresources']
 }
-
+mainClassName = 'com.saketh.sample.ApplicationKt'
+task stage {
+    dependsOn installDist
+}
 repositories {
     mavenLocal()
     jcenter()
