@@ -1,1 +1,1 @@
-web: build/install/sample-server-side/bin/sample-server-side
+web: build/install/sample/bin/sample
