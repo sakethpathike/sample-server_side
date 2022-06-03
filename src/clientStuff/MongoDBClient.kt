@@ -12,8 +12,5 @@ fun mongoClient(): MongoCollection<Document> {
 }
 
 fun envData(variableName:String): String? {
-    val envData= dotenv {
-        filename="env"
-    }
-    return envData[variableName]
+    return System.getenv(variableName)
 }
