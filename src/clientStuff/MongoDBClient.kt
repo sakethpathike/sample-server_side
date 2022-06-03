@@ -1,6 +1,7 @@
 package com.saketh.sample.clientStuff
 
 import com.mongodb.client.MongoCollection
+import io.github.cdimascio.dotenv.dotenv
 import org.bson.Document
 import org.litote.kmongo.KMongo
 
@@ -12,4 +13,4 @@ fun mongoClient(): MongoCollection<Document> {
 
 fun envData(variableName:String): String? {
     return System.getenv(variableName)
-}
+}   //!local

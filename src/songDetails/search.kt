@@ -15,6 +15,7 @@ fun Routing.search() {
         val response = mongoClient().find(
             """{${MongoOperator.or}:[{songName:{${MongoOperator.regex}:/$searchName/i}},{albumName:{${MongoOperator.regex}:/$searchName/i}}]}"""
         ).toList().json
+        mongoClient()
         try {
             call.respond(HttpStatusCode.OK, response)
         } catch (_: Exception) {
