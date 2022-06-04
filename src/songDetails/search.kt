@@ -1,58 +1,53 @@
 package com.saketh.sample.songDetails
 
-import com.saketh.sample.clientStuff.mongoClient
+
+import com.mongodb.client.MongoClient
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.litote.kmongo.KMongo
 import org.litote.kmongo.MongoOperator
 import org.litote.kmongo.find
 import org.litote.kmongo.json
 
 fun Routing.search() {
-    get("/search/{searchName}") {
-        val searchName = call.parameters["searchName"].toString()
-        val response = mongoClient().find(
-            """{${MongoOperator.or}:[{songName:{${MongoOperator.regex}:/$searchName/i}},{albumName:{${MongoOperator.regex}:/$searchName/i}}]}"""
-        ).toList().json
-        mongoClient()
-        try {
-            call.respond(HttpStatusCode.OK, response)
-        } catch (_: Exception) {
-            call.respond(
-                HttpStatusCode.NotFound,
-                "Meep! Please Recheck The Spelling Of The Album/Song You Are Searching For\uD83E\uDDD0"
-            )
-        }
-    }
+      searchResults("/search/{searchName}",  pathParameter = "searchName", globalSearch = true)
 }
 
 fun Routing.songSearch() {
-    get("/song/{songName}") {
-        val songName = call.parameters["songName"].toString()
-        val response = mongoClient().find("""{songName:{${MongoOperator.regex}:/$songName/i}}""").toList().json
-        try {
-            call.respond(HttpStatusCode.OK, response)
-        } catch (e: Exception) {
-            call.respond(
-                HttpStatusCode.NotFound,
-                "Meep! Please Recheck The Spelling Of The Song You Are Searching For\uD83E\uDDD0"
-            )
-        }
-    }
+    searchResults("/song/{songName}", dbSearchField = "songName", pathParameter = "songName")
 }
 
 fun Routing.albumSearch() {
-    get("/album/{albumName}") {
-        val albumName = call.parameters["albumName"].toString()
-        val response = mongoClient().find("""{albumName:{${MongoOperator.regex}:/$albumName/i}}""").toList().json
-        try {
-            call.respond(HttpStatusCode.OK, response)
-        } catch (e: Exception) {
-            call.respond(
-                HttpStatusCode.NotFound,
-                "Meep! Please Recheck The Spelling Of The Album You Are Searching For\uD83E\uDDD0"
-            )
+    searchResults("/album/{albumName}", dbSearchField = "albumName", pathParameter = "albumName")
+}
+
+fun Routing.searchResults(
+    pathWithParameter: String,
+    dbSearchField: String="songName",
+    pathParameter: String,
+    globalSearch: Boolean = false
+) {
+
+    get(pathWithParameter) {
+        val parameterName = call.parameters[pathParameter].toString()
+        val client: MongoClient =
+            KMongo.createClient("mongodb+srv://${System.getenv("USER_NAME")}:${System.getenv("PASSWORD")}@cluster0.2wr7r7n.mongodb.net/?retryWrites=true&w=majority")
+        val clientResponse =
+            client.getDatabase(System.getenv("DATABASE_NAME")).getCollection(System.getenv("COLLECTION_NAME"))
+                .find("""{$dbSearchField:{${MongoOperator.regex}:/$parameterName/i}}""").toList().json
+        val globalSearchResponse =
+            client.getDatabase(System.getenv("DATABASE_NAME")).getCollection(System.getenv("COLLECTION_NAME")).find(
+                """{${MongoOperator.or}:[{songName:{${MongoOperator.regex}:/$parameterName/i}},{albumName:{${MongoOperator.regex}:/$parameterName/i}}]}"""
+            ).toList().json
+        if (!globalSearch) {
+            call.respond(clientResponse).also {
+                client.close()
+            }
+        } else {
+            call.respond(globalSearchResponse).also {
+                client.close()
+            }
         }
     }
 }
