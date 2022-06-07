@@ -6,7 +6,7 @@ import com.github.kittinunf.fuel.json.responseJson
 //for frontend (sample)//
 fun wallpapers() {
     val request =
-        "https://api.imgur.com/3/gallery/Cq8rKRD".httpGet().header("Authorization", "Client-ID 58bcbf3f5ed49a1")
+        "https://api.imgur.com/3/gallery/Cq8rKRD".httpGet().header("Authorization", "Client-ID 5XXXXXXXXXXXXXXXXXX")
             .responseJson { _, _, result ->
                 val descriptionArray = result.get().obj().getJSONObject("data").getJSONArray("images")
                 for (count in 0 until descriptionArray.length()) {
