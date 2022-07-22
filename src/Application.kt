@@ -22,5 +22,6 @@ fun Application.module(testing: Boolean = false) {
         search()
         songSearch()
         albumSearch()
+        unreleased()
     }
 }
